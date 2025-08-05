@@ -137,10 +137,10 @@ const optionsAnimation: Array<{ label: string; value: string }> = [
 ];
 const isLoadingFile = ref<boolean>(false);
 
-const cssPropertiesString = ref<string>("");
+const cssPropertiesString = ref<string>("border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s");
 
 function generateCode():void {
-  const cssProperties = {
+  const cssProperties: Record<string, string> = {
   none:`
     border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
   `,
