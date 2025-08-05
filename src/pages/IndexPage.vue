@@ -1,15 +1,15 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <q-card class="row" dense flat bordered>
-      <q-card-section>
-        <q-card dense flat bordered class='col-6'>
+    <q-card class="row items-center justify-evenly col-6" dense flat bordered>
+      <q-card-section class='col-sm-12 col-md-6 col-lg-4'>
+        <q-card dense flat bordered >
           <q-card-section class="text-h6 justify-center items-center row">
             <q-icon name="image" size="50px" class="text-primary" />
 
             Criador de ícones
           </q-card-section>
           <q-card-section>
-            <div class="row q-pt-sm">
+            <div class="row q-pt-sm ">
               <div
                 class="col row items-center justify-center rounded-borders dropFile"
                 @dragover.prevent
@@ -67,7 +67,7 @@
           </q-card-section>
         </q-card>
       </q-card-section>
-      <q-card-section>
+      <q-card-section class='col-sm-12 col-md-6 col-lg-4'>
         <q-card class="full-width full-height column col-6" dense flat bordered>
           <q-card-section class="col-auto text-h6 justify-center items-center row">
             Prévia do ícone
@@ -86,7 +86,7 @@
           </q-card-section>
         </q-card>
       </q-card-section>
-      <q-card-section class="col-12 items-center justify-center">
+      <q-card-section class="col-sm-12 col-md-6 col-lg-4 items-center justify-center">
         <q-card  dense flat bordered class="row">
         <q-card-section>
           <q-btn color="primary" icon="check" label="Gerar código" @click="generateCode" />
