@@ -1,0 +1,50 @@
+    .beat {
+      animation: beat 1s infinite;
+    }
+    .beat-fade {
+      animation: beatFade 1s infinite;
+    }
+    .bounce {
+      animation: bounce 1s infinite;
+    }
+    .fade {
+      animation: fade 1s infinite;
+    }
+    .spin {
+      animation: spin 1s infinite linear;
+    }
+    .spin-reverse {
+      animation: spinReverse 1s infinite linear;
+    }
+    .spin-pulse {
+      animation: spinPulse 1.5s infinite;
+    }
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    @keyframes beatFade {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.5; }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes fade {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spinReverse {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+    @keyframes spinPulse {
+      0% { transform: rotate(0deg); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg); }
+    }
