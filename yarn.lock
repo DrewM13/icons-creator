@@ -1130,6 +1130,11 @@
   resolved "https://registry.yarnpkg.com/@vercel/ruby/-/ruby-2.2.1.tgz#c36ba0568531f30193479d2442177201142fbadb"
   integrity sha512-DsmTCggOa/Uvt/9JkafXx9U+Bz5eNIb6Bs422EOQo2zKwcxW88ITSh8mM5m0dQ0+B4k02X/moVim6iFa4sjazg==
 
+"@vercel/speed-insights@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@vercel/speed-insights/-/speed-insights-1.2.0.tgz#1656c3596d4ec02d93d301ca45944c1b9b245186"
+  integrity sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==
+
 "@vercel/static-build@2.7.17":
   version "2.7.17"
   resolved "https://registry.yarnpkg.com/@vercel/static-build/-/static-build-2.7.17.tgz#6b4c4f3fcc57e0cec7fc415c3837771a3c11c512"
