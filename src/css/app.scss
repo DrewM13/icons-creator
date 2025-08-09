@@ -19,6 +19,9 @@
     .spin-pulse {
       animation: spinPulse 1.5s infinite;
     }
+    .shake {
+      animation: shake 1s infinite;
+    }
     @keyframes beat {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.2); }

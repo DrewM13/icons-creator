@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-        <q-toolbar-title>Gerador de Ícones</q-toolbar-title>
+        <q-toolbar-title>Criador de Ícones</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -40,9 +40,9 @@ const linksList: EssentialLinkProps[] = [
   },
 ];
 
-const leftDrawerOpen = ref(false);
+const leftDrawerOpen = ref<boolean>(false);
 
-function toggleLeftDrawer() {
+function toggleLeftDrawer(): void {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>

@@ -1,15 +1,21 @@
 <template>
-  <q-page class="row items-center justify-evenly">
-    <q-card class="row items-center justify-evenly col-6" dense flat bordered>
-      <q-card-section class='col-sm-12 col-md-6 col-lg-4'>
-        <q-card dense flat bordered >
-          <q-card-section class="text-h6 justify-center items-center row">
-            <q-icon name="image" size="50px" class="text-primary" />
-
-            Criador de ícones
+  <q-page class="column items-center justify-evenly q-py-md ">
+    <q-card class="row items-center col-12 q-mx-md items-stretch" dense flat bordered>
+          <q-card-section class="justify-center items-center column col-12">
+            <span class="col text-h6"> Criador de ícones </span>
+            <q-img
+              src="/icon-generator.png"
+              spinner-color="primary"
+              spinner-size="30px"
+              height="100px"
+              width="130px"
+              class="col-12"
+            />
           </q-card-section>
+      <q-card-section class="col-sm-12 col-md-6 col-lg-6 flex">
+        <q-card class="fit" dense flat bordered>
           <q-card-section>
-            <div class="row q-pt-sm ">
+            <div class="row q-pt-sm">
               <div
                 class="col row items-center justify-center rounded-borders dropFile"
                 @dragover.prevent
@@ -19,7 +25,7 @@
                 <div>
                   <div class="column q-px-md">
                     <div class="col-auto text-center q-pb-sm">
-                      <q-icon name="fas fa-upload" size="md" />
+                      <q-icon name="fas fa-upload" size="sm" />
                     </div>
                     <div class="col">
                       Arraste e solte sua imagem aqui ou
@@ -42,8 +48,14 @@
             <q-list bordered class="rounded-borders">
               <q-item class="q-gutter-sm column">
                 <q-item-section>
-                  <q-input v-model="objIcon.name" label="Nome" outlined dense />
-                </q-item-section> 
+                  <q-input
+                    v-model="objIcon.name"
+                    label="Nome"
+                    :disable="dontHasImage"
+                    outlined
+                    dense
+                  />
+                </q-item-section>
                 <q-item-section>
                   <q-select
                     v-model="objIcon.animation"
@@ -53,56 +65,69 @@
                     map-options
                     emit-value
                     :options="optionsAnimation"
+                    :disable="dontHasImage"
+                    @update:model-value="(value) => resetSpeedAnimation(value)"
                   />
                 </q-item-section>
-                  <q-item-section>
-                  <q-input v-model.number="objIcon.animationSpeed" mask='###' label="Velocidade da Animação" outlined dense />
+                <q-item-section v-if="hasAnimation">
+                  <q-input
+                    v-model.number="objIcon.animationSpeed"
+                    mask="###"
+                    @blur="setSpeedAnimation()"
+                    hint="Quanto maior, mais lenta a animação"
+                    label="Velocidade da Animação"
+                    outlined
+                    dense
+                  />
                 </q-item-section>
                 <q-item-section class="border-section q-px-md q-pt-sm">
                   <div>Nível de arredondamento da borda</div>
-                  <q-slider v-model="objIcon.borderRadius" :min="0" :max="50" label />
+                  <q-slider
+                    v-model="objIcon.borderRadius"
+                    :min="0"
+                    :max="50"
+                    label
+                    :disable="dontHasImage"
+                  />
                 </q-item-section>
               </q-item>
             </q-list>
           </q-card-section>
         </q-card>
       </q-card-section>
-      <q-card-section class='col-sm-12 col-md-6 col-lg-4'>
-        <q-card class="full-width full-height column col-6" dense flat bordered>
+      <q-card-section class="col-sm-12 col-md-6 col-lg-6 flex">
+        <q-card class="column col fit justify-center items-center" dense flat bordered>
           <q-card-section class="col-auto text-h6 justify-center items-center row">
             Prévia do ícone
           </q-card-section>
           <q-separator spaced inset />
-          <q-card-section class="col column q-gutter-sm">
-            <div class="col items-center justify-center row">
+          <q-card-section class="col column q-gutter-md items-center justify-center row">
             <q-img
               :src="objIcon.imageBase64"
               :class="objIcon.animation"
-              class=" "
-              :style="`border-radius: ${objIcon.borderRadius}%; animation-duration: ${objIcon.animationSpeed}s;`"
+              class="image-size"
+              :style="imgStyle"
             />
-            </div>
-            <q-btn v-if="objIcon.svgContent" color="primary" no-caps class='col-auto' dense outline icon="download" label="Baixar SVG" @click="downloadSVG(objIcon.svgContent)" />
+            <q-btn
+              v-if="!dontHasImage"
+              color="primary"
+              no-caps
+              class="col-auto"
+              dense
+              outline
+              icon="download"
+              label="Baixar SVG"
+              @click="downloadSVG(objIcon)"
+            />
           </q-card-section>
         </q-card>
-      </q-card-section>
-      <q-card-section class="col-sm-12 col-md-6 col-lg-4 items-center justify-center">
-        <q-card  dense flat bordered class="row">
-        <q-card-section>
-          <q-btn color="primary" icon="check" label="Gerar código" @click="generateCode" />
-        </q-card-section>
-        <q-card-section class='col-6'>
-        {{cssPropertiesString}}
-        </q-card-section> 
-        </q-card>
-        
       </q-card-section>
     </q-card>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 type Icon = {
   name: string;
@@ -110,8 +135,7 @@ type Icon = {
   borderRadius: number;
   animationSpeed: number;
   repeatAnimation: string;
-  svgContent: string;
-  imageBase64: string | ArrayBuffer;
+  imageBase64: string;
 };
 
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -119,32 +143,33 @@ const objIcon = ref<Icon>({
   name: "",
   animation: "none",
   borderRadius: 0,
-  imageBase64: "",
+  imageBase64: "/no-image.svg",
   animationSpeed: 1,
-  repeatAnimation: 'once',
-  svgContent: ''
+  repeatAnimation: "once",
 });
 const optionsAnimation: Array<{ label: string; value: string }> = [
   { label: "Nenhuma", value: "none" },
-  { label: 'Spin', value: 'spin' },
-  { label: 'Spin Reversa', value: 'spin-reverse' },
-  { label: 'Bounce', value: 'bounce' },
-  { label: 'Shake', value: 'shake' },
-  { label: 'BeatFade', value: 'beat-fade' },
-  { label: 'Beat', value: 'beat' },
-  { label: 'Fade', value: 'fade' },
-  { label: 'Spin Pulse', value: 'spin-pulse' },
+  { label: "Spin", value: "spin" },
+  { label: "Spin Reversa", value: "spin-reverse" },
+  { label: "Bounce", value: "bounce" },
+  { label: "Shake", value: "shake" },
+  { label: "BeatFade", value: "beat-fade" },
+  { label: "Beat", value: "beat" },
+  { label: "Fade", value: "fade" },
+  { label: "Spin Pulse", value: "spin-pulse" },
 ];
 const isLoadingFile = ref<boolean>(false);
+const dontHasImage = computed(
+  (): boolean => objIcon.value.imageBase64 === "/no-image.svg"
+);
+const hasAnimation = computed((): boolean => objIcon.value.animation !== "none");
+const imgStyle = computed((): string => {
+  return `border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s;`;
+});
 
-const cssPropertiesString = ref<string>("border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s");
-
-function generateCode():void {
+const StyleSVG = computed((): string => {
   const cssProperties: Record<string, string> = {
-  none:`
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
-  `,
-  beat: `
+    beat: `
     @keyframes beat {
       0% {
         transform: scale(1);
@@ -158,10 +183,10 @@ function generateCode():void {
     }
     .beat {
       animation: beat 1s infinite;
+      transform-origin: 50% 50%
     }
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
   `,
-  'beat-fade': `  
+    "beat-fade": `  
     @keyframes beat-fade {
       0% {
         transform: scale(1);
@@ -178,10 +203,10 @@ function generateCode():void {
     }
      .beat-fade {
       animation: beatFade 1s infinite;
+      transform-origin: 50% 50%
     }
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
   `,
-  fade: `
+    fade: `
     @keyframes fade {
       0% {
         opacity: 1;
@@ -192,10 +217,10 @@ function generateCode():void {
     }
     .fade {
       animation: fade 1s infinite;
+      transform-origin: 50% 50%
     }
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
   `,
-  spin: `
+    spin: `
     @keyframes spin {
       0% {
         transform: rotate(0deg);
@@ -206,10 +231,10 @@ function generateCode():void {
     }
     .spin {
       animation: spin 2s linear infinite;
+      transform-origin: 50% 50%
     }
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
   `,
-  'spin-reverse': `
+    "spin-reverse": `
     @keyframes spin-reverse {
       0% {
         transform: rotate(0deg);
@@ -220,10 +245,11 @@ function generateCode():void {
     }
     .spin-reverse {
       animation: spin-reverse 2s linear infinite;
+      transform-origin: 50% 50%
     }
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
+    
   `,
-  'spin-pulse': `
+    "spin-pulse": `
     @keyframes spin-pulse {
       0% {
         transform: rotate(0deg);
@@ -237,10 +263,10 @@ function generateCode():void {
     }
     .spin-pulse {
       animation: spin-pulse 2s linear infinite;
+      transform-origin: 50% 50%
     }
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
   `,
-  shake: `
+    shake: `
     @keyframes shake {
       0% {
         transform: translateX(0);
@@ -260,10 +286,10 @@ function generateCode():void {
     }
     .shake {
       animation: shake 0.5s infinite;
+      transform-origin: 50% 50%
     }
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
   `,
-  bounce: `
+    bounce: `
     @keyframes bounce {
       0%, 20%, 50%, 80%, 100% {
         transform: translateY(0);
@@ -277,12 +303,30 @@ function generateCode():void {
     }
     .bounce {
       animation: bounce 2s infinite;
+      transform-origin: 50% 50%
     }
-    border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s
-    `
-}
-  
-  cssPropertiesString.value = cssProperties[objIcon.value.animation]
+    `,
+  };
+  return `${cssProperties[objIcon.value.animation]} border-radius: ${
+    objIcon.value.borderRadius
+  }%; animation-duration: ${objIcon.value.animationSpeed}s`;
+});
+
+function generateSVG(): string {
+  const rx: number = (objIcon.value.borderRadius / 50) * 32;
+  const svg: string = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="rounded">
+      <rect x="0" y="0" width="64" height="64" rx="${rx}" ry="${rx}" />
+    </clipPath>
+  </defs>
+  <g class="${objIcon.value.animation}" style="animation-duration: ${objIcon.value.animationSpeed}s;">
+    <image href="${objIcon.value.imageBase64}" height="64" width="64" clip-path="url(#rounded)" />
+  </g>
+  <style>${StyleSVG.value}</style>
+</svg>`;
+
+  return svg;
 }
 
 function openFileDialog(): void {
@@ -290,8 +334,10 @@ function openFileDialog(): void {
 }
 
 function handleFileChange(event: Event): void {
-  const file = event?.target?.files[0];
-  if (file) {
+  const input = event?.target as HTMLInputElement;
+  const files: FileList | null = input?.files;
+  if (files && files.length > 0) {
+    const file: File = files[0] || new File([], "");
     convertToBase64(file);
   }
 }
@@ -300,15 +346,11 @@ function convertToBase64(file: File): void {
   isLoadingFile.value = true;
   const reader = new FileReader();
   reader.onload = () => {
-        const base64 = reader.result as string;
-
-    // Monta o SVG com a imagem embutida
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-        <image href="${base64}" height="64" width="64"/>
-      </svg>`
-   objIcon.value.imageBase64 = base64
-   objIcon.value.svgContent = svg
+    const base64 = reader.result as string;
+    objIcon.value.imageBase64 = base64;
+    if (!objIcon.value.name) {
+      objIcon.value.name = file.name.split(".")[0] || "";
+    }
   };
   reader.onerror = (error) => {
     console.error("Erro ao converter para base64:", error);
@@ -324,17 +366,30 @@ function handleDrop(event: DragEvent): void {
   }
 }
 
+function setSpeedAnimation(): void {
+  if (!objIcon.value.animationSpeed) {
+    objIcon.value.animationSpeed = 1;
+  }
+}
+
+function resetSpeedAnimation(value: string): void {
+  if (value === "none") {
+    objIcon.value.animationSpeed = 1;
+  }
+}
+
+function downloadSVG(obj: Icon): void {
+  if (obj.imageBase64) {
+    const svg = generateSVG();
+    const blob = new Blob([svg], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${obj.name}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+}
 </script>
-
-<style lang="sass" scoped>
-.dropFile
-  border: dashed
-  border-color: darkgrey
-  height: 90px
-
-.border-section
-  border: 1px solid lightgrey
-
-  border-radius: 5px
-
-</style>

@@ -1,8 +1,8 @@
 {
   "name": "icons-creator",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A creator of icons",
-  "productName": "Icons Creator",
+  "productName": "Criador de ícones",
   "author": "DrewM13 <andrew.maciel@hotmail.com>",
   "type": "module",
   "private": true,
