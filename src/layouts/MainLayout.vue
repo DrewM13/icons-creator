@@ -28,9 +28,9 @@ import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink
 const linksList: EssentialLinkProps[] = [
   {
     title: 'Github',
-    caption: 'github.com/DrewM13',
+    caption: 'github.com/DrewM13/icons-creator',
     icon: 'fab fa-github',
-    link: 'https://github.com/DrewM13',
+    link: 'https://github.com/DrewM13/icons-creator',
   },
   {
     title: 'LinkedIn',
