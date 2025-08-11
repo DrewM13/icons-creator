@@ -1,4 +1,4 @@
-# 📦 Icons Creator
+# 📦 Criador de ícones
 
 [![Vue.js 3](https://img.shields.io/badge/Vue.js-3-42b883?logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Quasar Framework 2](https://img.shields.io/badge/Quasar-2-1976d2?logo=quasar&logoColor=white)](https://quasar.dev/)
@@ -6,7 +6,7 @@
 [![Vercel Deploy](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel&logoColor=white)](https://icons-creator.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-O **Icons Creator** é uma ferramenta online que permite criar ícones personalizados a partir de imagens **JPEG**, **JPG** ou **PNG**, ajudando desenvolvedores e designers que precisam de ícones específicos que não estão disponíveis em bibliotecas populares como **Font Awesome** ou **Google Fonts**.
+O **Criador de ícones** é uma ferramenta online que permite criar ícones personalizados a partir de imagens **JPEG**, **JPG** ou **PNG**, ajudando desenvolvedores e designers que precisam de ícones específicos que não estão disponíveis em bibliotecas populares como **Font Awesome** ou **Google Fonts**.
 
 🔗 **Acesse agora:** [icons-creator.vercel.app](https://icons-creator.vercel.app/)
 
