@@ -41,7 +41,7 @@ Acesse diretamente:
 
 ## 📚 Como usar os ícones SVG
 
-Abaixo, veja exemplos de como usar um ícone SVG criado no **Icons Creator** em **Vue**, **Vue + Quasar** e **HTML puro**.
+Abaixo, veja exemplos de como usar um ícone SVG criado no **Criador de ícones** em **Vue**, **Vue + Quasar** e **HTML puro**.
 
 <details>
 <summary> Vue </summary>
