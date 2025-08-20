@@ -123,4 +123,10 @@ Abra um Pull Request.
 
  Biblioteca pessoal de ícones salvos
 
+ Internacionalização para outros idiomas
+
+ IA para remover fundo
+ 
+ IA para com base em um texto gerar a imagem
+
  
