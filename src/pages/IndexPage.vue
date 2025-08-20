@@ -1,17 +1,17 @@
 <template>
-  <q-page class="column items-center justify-evenly q-py-md ">
+  <q-page class="column items-center justify-evenly q-py-md">
     <q-card class="row items-center col-12 q-mx-md items-stretch" dense flat bordered>
-          <q-card-section class="justify-center items-center column col-12">
-            <span class="col text-h6"> Criador de ícones </span>
-            <q-img
-              src="/icon-generator.png"
-              spinner-color="primary"
-              spinner-size="30px"
-              height="100px"
-              width="130px"
-              class="col-12"
-            />
-          </q-card-section>
+      <q-card-section class="justify-center items-center column col-12">
+        <span class="col text-h6"> Criador de ícones </span>
+        <q-img
+          src="/icon-generator.png"
+          spinner-color="primary"
+          spinner-size="30px"
+          height="100px"
+          width="130px"
+          class="col-12"
+        />
+      </q-card-section>
       <q-card-section class="col-sm-12 col-md-6 col-lg-6 flex">
         <q-card class="fit" dense flat bordered>
           <q-card-section>
@@ -52,8 +52,15 @@
                     v-model="objIcon.name"
                     label="Nome"
                     :disable="dontHasImage"
+                    :rules="[
+                      (name) =>
+                        !name ||
+                        validateName(name) ||
+                        'Não é permitido caracteres especiais, exceto  hífens e sublinhados',
+                    ]"
                     outlined
                     dense
+                    hide-bottom-space
                   />
                 </q-item-section>
                 <q-item-section>
@@ -128,6 +135,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import notify from "src/hooks/notify";
 
 type Icon = {
   name: string;
@@ -164,9 +172,9 @@ const dontHasImage = computed(
 );
 const hasAnimation = computed((): boolean => objIcon.value.animation !== "none");
 const imgStyle = computed((): string => {
-  return `border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s;`;
+  return `border-radius: ${objIcon.value.borderRadius}%; animation-duration: ${objIcon.value.animationSpeed}s; height: auto; max-width: 100%;`;
 });
-
+const { errorNotify } = notify();
 const StyleSVG = computed((): string => {
   const cssProperties: Record<string, string> = {
     beat: `
@@ -320,7 +328,7 @@ function generateSVG(): string {
       <rect x="0" y="0" width="64" height="64" rx="${rx}" ry="${rx}" />
     </clipPath>
   </defs>
-  <g class="${objIcon.value.animation}" style="animation-duration: ${objIcon.value.animationSpeed}s;">
+  <g class="${objIcon.value.animation}" style="animation-duration: ${objIcon.value.animationSpeed}s; height: auto; max-width: 100%;">
     <image href="${objIcon.value.imageBase64}" height="64" width="64" clip-path="url(#rounded)" />
   </g>
   <style>${StyleSVG.value}</style>
@@ -338,7 +346,11 @@ function handleFileChange(event: Event): void {
   const files: FileList | null = input?.files;
   if (files && files.length > 0) {
     const file: File = files[0] || new File([], "");
-    convertToBase64(file);
+    if (file.size <= 40 * 1024 * 1024) {
+      convertToBase64(file);
+    } else {
+      errorNotify("O tamanho do arquivo deve ser até 40MB");
+    }
   }
 }
 
@@ -348,9 +360,6 @@ function convertToBase64(file: File): void {
   reader.onload = () => {
     const base64 = reader.result as string;
     objIcon.value.imageBase64 = base64;
-    if (!objIcon.value.name) {
-      objIcon.value.name = file.name.split(".")[0] || "";
-    }
   };
   reader.onerror = (error) => {
     console.error("Erro ao converter para base64:", error);
@@ -391,5 +400,10 @@ function downloadSVG(obj: Icon): void {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
+}
+
+function validateName(name: string): boolean {
+  const regexToValidateName = /^[A-Za-z][A-Za-z0-9_-]*$/;
+  return regexToValidateName.test(name);
 }
 </script>
